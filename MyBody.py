@@ -13,17 +13,15 @@ import datetime
 class MyBody:
     def __init__(self):
         self.VERSION = 0.0
+        self.VERSION_DATE = "2015-07-19"
         self.user = ''
         self.height = 0.0
         self.weight = []
         self.bmi = []
         self.date = []
-        
         self.read_user_info(r"../userinfo/user.txt")
-        print "MyBody ver", self.VERSION,
-        print "personal weight supervisory program.",
-        print "@author: heshenghuan 2015"
-        print "-"*79
+        
+    def print_user_info(self):
         print "User's information:"
         print "User:", self.user
         print "Height(m):", self.height
@@ -44,18 +42,33 @@ class MyBody:
         line = file_handler.readline()
         self.height = float(line.split()[-1])
         
-    def get_arg(self, arg):
-        try:
-            options,args = getopt.getopt(arg,"ha:",["help"])
-        except getopt.GetoptError:
-            print "argument error"
+    def print_help(self):
+        print "MyBody personal weight supervisory program.",
+        print "ver",self.VERSION,self.VERSION_DATE
+        print "@author: heshenghuan"
+        print "usage: python MyBody.py [options]"
+        print "options: -h               ->help"
+        print "         -a float         ->add weight record"
         
-        for name, value in options:
-            if name in ('-h', '--help'):
-                print "help info"
-            if name in ('-a'):
-                self.add_record(value)
-    
+    def get_arg(self, arg):
+        error = False
+        try:
+            options,args = getopt.getopt(arg,"ha:")
+        except getopt.GetoptError:
+            error = True
+        
+        if not error:
+            for name, value in options:
+                if name in ('-h', '--help'):
+                    self.print_help()
+                if name in ('-a'):
+                    bmi = self.add_record(value)
+                    self.bmi_analysis(bmi)
+        else:
+            #argument error, display help information
+            print "Argument Error!"
+            self.print_help()
+            
     def add_record(self, weight):
         now = datetime.datetime.now()
         date = now.strftime("%Y-%m-%d")
@@ -71,6 +84,25 @@ class MyBody:
         output.write(' ')
         output.close()
         print "Add a record:",date,weight,bmi
+        return float(bmi)
+    
+    def bmi_analysis(self, bmi):
+        if bmi<18.5:
+            print "Underweight"
+            print "You are underweight. Eat more, it\'s okay."
+        if bmi>=18.5 and bmi<24.99:
+            print "Normal"
+            print "Your weight is normal."
+        if bmi>=24.99 and bmi<28:
+            print "Overweight"
+            print "You are overweight. Please take more exercise"
+            print "and pay attention to your diet."
+        if bmi>=28 and bmi<32:
+            print "Fat"
+            print "You are obese. You need to lose weight."
+        if bmi>32:
+            print "Obese"
+            print "You are very fat. You need doctor."
         
 if __name__ == "__main__":
     case = MyBody()
