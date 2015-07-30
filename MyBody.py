@@ -5,7 +5,6 @@ Created on Sat Jul 18 19:03:00 2015
 @author: heshenghuan
 """
 
-import numpy as np
 import matplotlib.pyplot as pl
 import getopt
 import sys
@@ -31,7 +30,7 @@ class MyBody:
         file_handler = open(path, 'r')
         for line in file_handler.readlines():
             data = line.split()            
-            self.date.append(data[0][5:])
+            self.date.append(data[0])
             self.weight.append(float(data[1]))
             self.bmi.append(float(data[2]))
         file_handler.close()
@@ -51,11 +50,13 @@ class MyBody:
         print "options: -h           ->help"
         print "         -a float     ->add weight record"
         print "         -s           ->show the picture of weight change"
+        print "         -d           ->delete the last record"
+        print "         -p           ->print all the record"
         
     def get_arg(self, arg):
         error = False
         try:
-            options,args = getopt.getopt(arg,"ha:s")
+            options,args = getopt.getopt(arg,"ha:sdp")
         except getopt.GetoptError:
             error = True
         
@@ -68,6 +69,10 @@ class MyBody:
                     self.bmi_analysis(bmi)
                 if name in ('-s'):
                     self.show()
+                if name in ('-d'):
+                    self.del_record()
+                if name in ('-p'):
+                    self.print_record()
         else:
             #argument error, display help information
             print "Argument Error!"
@@ -85,11 +90,33 @@ class MyBody:
         output.write(weight)
         output.write(' ')
         output.write(str(bmi))
-        output.write(' ')
         output.close()
         print "Add a record:",date,weight,bmi
         return float(bmi)
     
+    def del_record(self):
+        self.read_data(r"../userinfo/weights.txt")
+        self.date.__delitem__(-1)
+        self.weight.__delitem__(-1)
+        self.bmi.__delitem__(-1)
+        output = open(r"../userinfo/weights.txt","w")
+        for i in range(len(self.date)):
+            output.write(self.date[i])
+            output.write(' ')
+            output.write(str(self.weight[i]))
+            output.write(' ')
+            output.write(str(self.bmi[i]))
+            output.write('\n')
+        output.close()
+        print "Deleted the last record."
+    
+    def print_record(self):
+        self.read_data(r"../userinfo/weights.txt")
+        print "date:         weight:   bmi:"
+        #print "2015-07-30    75.77     25.2222"
+        for i in range(len(self.date)):
+            print self.date[i], "  ",self.weight[i], '    ',self.bmi[i]
+        
     def bmi_analysis(self, bmi):
         if bmi<18.5:
             print "Underweight"
