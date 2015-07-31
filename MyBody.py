@@ -101,12 +101,13 @@ class MyBody:
         self.bmi.__delitem__(-1)
         output = open(r"../userinfo/weights.txt","w")
         for i in range(len(self.date)):
+            if i > 0:
+                output.write('\n')
             output.write(self.date[i])
             output.write(' ')
-            output.write(str(self.weight[i]))
+            output.write("%.2f"%self.weight[i])
             output.write(' ')
-            output.write(str(self.bmi[i]))
-            output.write('\n')
+            output.write("%.4f"%self.bmi[i])
         output.close()
         print "Deleted the last record."
     
@@ -115,7 +116,7 @@ class MyBody:
         print "date:         weight:   bmi:"
         #print "2015-07-30    75.77     25.2222"
         for i in range(len(self.date)):
-            print self.date[i], "  ",self.weight[i], '    ',self.bmi[i]
+            print self.date[i], "  ","%.2f"%(self.weight[i]), '   ',"%.4f"%(self.bmi[i])
         
     def bmi_analysis(self, bmi):
         if bmi<18.5:
