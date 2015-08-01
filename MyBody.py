@@ -118,6 +118,26 @@ class MyBody:
         for i in range(len(self.date)):
             print self.date[i], "  ","%.2f"%(self.weight[i]), '   ',"%.4f"%(self.bmi[i])
         
+        #calculate average weights for last 7 or less days
+        aver_weights = 0.0
+        w_sum = 0.0
+        aver_bmi = 0.0
+        b_sum = 0.0
+        if len(self.date) > 7:
+            for i in range(-7,0):
+                w_sum += self.weight[i]
+                b_sum += self.bmi[i]
+            aver_weights = w_sum/7
+            aver_bmi = b_sum/7
+        else:
+            for i in range(len(self.date)):
+                w_sum += self.weight[i]
+                b_sum += self.bmi[i]
+            aver_weights = w_sum/len(self.date)
+            aver_bmi = b_sum/len(self.date)
+        print "\naverage weights for last 7 days: %.2f"%aver_weights,"kg"
+        print "average BMI for last 7 days: %.4f"%aver_bmi
+        self.bmi_analysis(aver_bmi)
     def bmi_analysis(self, bmi):
         if bmi<18.5:
             print "Underweight"
